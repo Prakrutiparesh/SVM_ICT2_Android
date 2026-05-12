@@ -5,17 +5,18 @@ plugins {
 
 android {
     namespace = "com.example.ict2_project"
-    compileSdk {
-        version = release(36)
+    compileSdk = 34
+
+    buildFeatures {
+        viewBinding = true
     }
 
     defaultConfig {
         applicationId = "com.example.ict2_project"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,18 +38,34 @@ android {
     }
 }
 
+// Resolution strategy – correct Kotlin DSL syntax
+configurations.all {
+    resolutionStrategy {
+        force("androidx.core:core:1.12.0")
+        force("androidx.core:core-ktx:1.12.0")
+        force("androidx.activity:activity:1.8.2")
+    }
+    exclude(group = "androidx.navigationevent", module = "navigationevent-android")
+}
+
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    // Use forced versions directly
+    implementation("androidx.core:core:1.12.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.activity:activity:1.8.2")
+
+    // Catalog dependencies (ensure they are API 34 compatible)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+
+    // Retrofit & networking
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
     implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

@@ -16,11 +16,19 @@
         android:theme="@style/Theme.ICT2_Project"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ResetPasswordActivity"
+            android:name=".activities.AttendanceActivity"
             android:exported="false" />
         <activity
-            android:name=".DashboardActivity"
+            android:name=".TimeTableActivity"
             android:exported="false" />
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".DashboardActivity" -->
+        <!-- android:exported="false" /> -->
+        <activity
+            android:name=".DashboardActivity"
+            android:theme="@style/Theme.ICT2_Project" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

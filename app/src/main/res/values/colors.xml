@@ -5,4 +5,7 @@
     <color name="purple_500">#4A00E0</color>
     <color name="purple_700">#3A00B0</color>
     <color name="cardLightBg">#F5F8FF</color>
+    <color name="present_green">#4CAF50</color>
+    <color name="absent_red">#F44336</color>
+    <color name="primary_blue">#1E3A8A</color>
 </resources>
