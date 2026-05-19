@@ -43,7 +43,9 @@ data class Session(
 data class Class(
     @SerializedName("classId") val classId: Int,
     @SerializedName("className") val className: String,
-    @SerializedName("medium") val medium: String? = null
+    @SerializedName("medium") val medium: String? = null,
+    @SerializedName("sessionId")  val sessionId: Int? = null
+
 )
 
 data class Section(

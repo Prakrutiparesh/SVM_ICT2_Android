@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
@@ -29,6 +28,7 @@ class TimeTableActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTimetableBinding
 
     private val sessions = mutableListOf<Session>()
+    private val allClasses = mutableListOf<Class>()
     private val classes = mutableListOf<Class>()
     private val sections = mutableListOf<Section>()
     private val mediums = listOf("Gujarati", "English")
@@ -63,37 +63,45 @@ class TimeTableActivity : AppCompatActivity() {
     }
 
     private fun setupSpinners() {
+        // Medium Spinner
         val mediumAdapter = ArrayAdapter(this, R.layout.dropdown_item, mediums)
-        (binding.spinnerMedium as? AutoCompleteTextView)?.setAdapter(mediumAdapter)
+        binding.spinnerMedium.setAdapter(mediumAdapter)
+
+        // Set default medium
+        binding.spinnerMedium.setText(mediums[0], false)
+        selectedMedium = mediums[0]
+
         binding.spinnerMedium.setOnItemClickListener { _, _, position, _ ->
             selectedMedium = mediums[position]
-            selectedClassId = null
-            selectedSectionId = null
-            (binding.spinnerClass as? AutoCompleteTextView)?.text?.clear()
-            (binding.spinnerSection as? AutoCompleteTextView)?.text?.clear()
-            fetchClassesByMedium(selectedMedium!!)
+
+            // 🔥 CRITICAL: Clear everything when medium changes (same as AttendanceActivity)
+            clearClassAndSection()
+
+            // Load new classes for selected medium
+            loadClasses()
         }
 
+        // Session Spinner
         fetchSessions()
+    }
 
-        binding.spinnerClass.setOnItemClickListener { _, _, position, _ ->
-            if (position < classes.size) {
-                selectedClassId = classes[position].classId
-                fetchSectionsByClass(selectedClassId!!)
-            }
-        }
+    // 🔥 NEW METHOD: Clear all class and section data (exactly like AttendanceActivity)
+    private fun clearClassAndSection() {
+        selectedClassId = null
+        selectedSectionId = null
+        classes.clear()
+        sections.clear()
+        allClasses.clear()
 
-        binding.spinnerSession.setOnItemClickListener { _, _, position, _ ->
-            if (position < sessions.size) {
-                selectedSessionId = sessions[position].sessionId
-            }
-        }
+        binding.spinnerClass.setText("", false)
+        binding.spinnerSection.setText("", false)
 
-        binding.spinnerSection.setOnItemClickListener { _, _, position, _ ->
-            if (position < sections.size) {
-                selectedSectionId = sections[position].sectionId
-            }
-        }
+        binding.spinnerClass.setAdapter(
+            ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
+        )
+        binding.spinnerSection.setAdapter(
+            ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
+        )
     }
 
     private fun fetchSessions() {
@@ -103,12 +111,31 @@ class TimeTableActivity : AppCompatActivity() {
                     sessions.clear()
                     sessions.addAll(response.body()!!)
                     val names = sessions.map { it.sessionName }
-                    val adapter = ArrayAdapter(
-                        this@TimeTableActivity,
-                        R.layout.dropdown_item,
-                        names
-                    )
-                    (binding.spinnerSession as? AutoCompleteTextView)?.setAdapter(adapter)
+                    val adapter =
+                        ArrayAdapter(this@TimeTableActivity, R.layout.dropdown_item, names)
+                    binding.spinnerSession.setAdapter(adapter)
+
+                    if (sessions.isNotEmpty()) {
+                        binding.spinnerSession.setText(names[0], false)
+                        selectedSessionId = sessions[0].sessionId
+
+                        // Load classes if medium is already selected
+                        if (!selectedMedium.isNullOrEmpty()) {
+                            loadClasses()
+                        }
+                    }
+
+                    binding.spinnerSession.setOnItemClickListener { _, _, position, _ ->
+                        selectedSessionId = sessions[position].sessionId
+
+                        // 🔥 Clear class and section when session changes
+                        clearClassAndSection()
+
+                        // Reload classes for new session
+                        if (!selectedMedium.isNullOrEmpty()) {
+                            loadClasses()
+                        }
+                    }
                 } else {
                     showError("No sessions found")
                 }
@@ -120,32 +147,107 @@ class TimeTableActivity : AppCompatActivity() {
         })
     }
 
-    private fun fetchClassesByMedium(medium: String) {
-        RetrofitClient.instance.getClassesByMedium(medium).enqueue(object : Callback<List<Class>> {
-            override fun onResponse(call: Call<List<Class>>, response: Response<List<Class>>) {
-                if (response.isSuccessful && !response.body().isNullOrEmpty()) {
-                    classes.clear()
-                    classes.addAll(response.body()!!)
-                    val classNames = classes.map { it.className }
-                    val adapter = ArrayAdapter(
-                        this@TimeTableActivity,
-                        R.layout.dropdown_item,
-                        classNames
-                    )
-                    (binding.spinnerClass as? AutoCompleteTextView)?.setAdapter(adapter)
-                } else {
-                    showError("No classes found for $medium medium")
-                }
-            }
+    // 🔥 MODIFIED: Load classes similar to AttendanceActivity
+    private fun loadClasses() {
+        if (selectedSessionId == null || selectedMedium.isNullOrEmpty()) {
+            return
+        }
 
-            override fun onFailure(call: Call<List<Class>>, t: Throwable) {
-                showError("Failed to load classes: ${t.message}")
-            }
-        })
+        // Save the requested medium to check for changes later
+        val requestedMedium = selectedMedium
+        val requestedSessionId = selectedSessionId
+
+        // Clear old data before fetching new
+        clearClassAndSection()
+
+        // Fetch all classes for the selected medium
+        RetrofitClient.instance.getClassesByMedium(selectedMedium!!)
+            .enqueue(object : Callback<List<Class>> {
+
+                override fun onResponse(
+                    call: Call<List<Class>>,
+                    response: Response<List<Class>>
+                ) {
+                    // 🔥 IMPORTANT: Ignore response if medium or session changed during network call
+                    if (requestedMedium != selectedMedium || requestedSessionId != selectedSessionId) {
+                        return
+                    }
+
+                    if (response.isSuccessful && !response.body().isNullOrEmpty()) {
+                        val allFetchedClasses = response.body()!!
+
+                        // 🔥 Filter classes by selected session (same as AttendanceActivity)
+                        allClasses.clear()
+                        allClasses.addAll(allFetchedClasses)
+
+                        classes.clear()
+                        val filtered = allClasses.filter {
+                            it.sessionId == selectedSessionId &&
+                                    it.medium.equals(selectedMedium, ignoreCase = true)
+                        }
+                        classes.addAll(filtered)
+
+                        updateClassSpinner()
+
+                        if (classes.isEmpty()) {
+                            showError("No classes found for this session and medium")
+                        }
+                    } else {
+                        classes.clear()
+                        updateClassSpinner()
+                        showError("No classes found for ${selectedMedium} medium")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<Class>>, t: Throwable) {
+                    // 🔥 Ignore response if medium or session changed during network call
+                    if (requestedMedium != selectedMedium || requestedSessionId != selectedSessionId) {
+                        return
+                    }
+
+                    classes.clear()
+                    updateClassSpinner()
+                    showError("Failed to load classes: ${t.message}")
+                }
+            })
     }
 
-    private fun fetchSectionsByClass(classId: Int) {
-        RetrofitClient.instance.getSectionsByClass(classId)
+    private fun updateClassSpinner() {
+        val classNames = classes.map { it.className }
+        val adapter = ArrayAdapter(this, R.layout.dropdown_item, classNames)
+        binding.spinnerClass.setAdapter(adapter)
+
+        if (classNames.isEmpty()) {
+            binding.spinnerClass.setText("", false)
+        }
+
+        // Set up class item click listener
+        binding.spinnerClass.setOnItemClickListener { _, _, position, _ ->
+            if (position < classes.size) {
+                selectedClassId = classes[position].classId
+                clearSection()
+                loadSections()
+            }
+        }
+    }
+
+    private fun clearSection() {
+        selectedSectionId = null
+        sections.clear()
+        binding.spinnerSection.setText("", false)
+        binding.spinnerSection.setAdapter(
+            ArrayAdapter(
+                this,
+                R.layout.dropdown_item,
+                emptyList<String>()
+            )
+        )
+    }
+
+    private fun loadSections() {
+        if (selectedClassId == null) return
+
+        RetrofitClient.instance.getSectionsByClass(selectedClassId!!)
             .enqueue(object : Callback<List<Section>> {
                 override fun onResponse(
                     call: Call<List<Section>>,
@@ -160,7 +262,13 @@ class TimeTableActivity : AppCompatActivity() {
                             R.layout.dropdown_item,
                             sectionNames
                         )
-                        (binding.spinnerSection as? AutoCompleteTextView)?.setAdapter(adapter)
+                        binding.spinnerSection.setAdapter(adapter)
+
+                        binding.spinnerSection.setOnItemClickListener { _, _, position, _ ->
+                            if (position < sections.size) {
+                                selectedSectionId = sections[position].sectionId
+                            }
+                        }
                     } else {
                         showError("No sections found for this class")
                     }
@@ -233,7 +341,6 @@ class TimeTableActivity : AppCompatActivity() {
         val dayOrder = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
         val allLectures = timetables.map { it.lectureNo }.distinct().sorted()
 
-        // Header
         val headerRow = TableRow(this)
         headerRow.addView(createHeaderCell("Period"))
         for (day in dayOrder) {
@@ -241,37 +348,29 @@ class TimeTableActivity : AppCompatActivity() {
         }
         binding.tableTimetable.addView(headerRow)
 
-        // Data rows
         var rowIndex = 0
         for (lecture in allLectures) {
             val dataRow = TableRow(this)
-
-            // Period cell (3 lines)
-            val periodText = "Lecture $lecture\n\n"   // three lines: period, blank, blank
+            val periodText = "Lecture $lecture\n\n"
             dataRow.addView(createDataCell(periodText, rowIndex, isPeriodCell = true))
-
-            // Day cells
             for (day in dayOrder) {
                 val entry = timetables.find { it.dayName == day && it.lectureNo == lecture }
-                val cellText = buildCellText(entry)   // returns 3 lines
+                val cellText = buildCellText(entry)
                 dataRow.addView(createDataCell(cellText, rowIndex, isPeriodCell = false))
             }
-
             binding.tableTimetable.addView(dataRow)
             rowIndex++
         }
     }
 
     private fun buildCellText(entry: Timetable?): String {
-        if (entry == null) return "\n\n"   // empty 3 lines
-        if (entry.isBreak == true) return "BREAK\n\n"   // BREAK + two empty lines
-
+        if (entry == null) return "\n\n"
+        if (entry.isBreak == true) return "BREAK\n\n"
         val subject = entry.subject?.subjectName ?: ""
         val teacher = entry.staff?.fullName ?: ""
         val start = formatTime(entry.startTime)
         val end = formatTime(entry.endTime)
         val time = "$start - $end"
-
         return "$subject\n$time\n$teacher"
     }
 
@@ -297,7 +396,6 @@ class TimeTableActivity : AppCompatActivity() {
     ): TextView {
         val bgColor =
             if (rowIndex % 2 == 0) Color.parseColor("#FFFFFF") else Color.parseColor("#F5F8FF")
-
         return TextView(this).apply {
             setTextColor(Color.BLACK)
             setBackgroundColor(bgColor)
@@ -305,7 +403,6 @@ class TimeTableActivity : AppCompatActivity() {
             gravity = Gravity.CENTER
             maxLines = 3
             ellipsize = android.text.TextUtils.TruncateAt.END
-
             if (isPeriodCell) {
                 textSize = 14f
                 setTypeface(typeface, android.graphics.Typeface.BOLD)
@@ -318,7 +415,8 @@ class TimeTableActivity : AppCompatActivity() {
                     spannable.append(lines[0])
                     spannable.setSpan(
                         StyleSpan(android.graphics.Typeface.BOLD),
-                        0, lines[0].length,
+                        0,
+                        lines[0].length,
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                     for (i in 1 until lines.size) {
@@ -330,7 +428,6 @@ class TimeTableActivity : AppCompatActivity() {
                     setText(text)
                 }
             }
-
             val border = android.graphics.drawable.GradientDrawable()
             border.setStroke(1, Color.parseColor("#DDDDDD"))
             border.setColor(bgColor)

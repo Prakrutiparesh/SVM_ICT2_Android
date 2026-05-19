@@ -20,13 +20,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Mark Attendance"
+            android:text="Monthly Attendance Report"
             android:textColor="#1E3A8A"
             android:textSize="20sp"
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Scrollable area for Filter Card + ProgressBar -->
+    <!-- Scrollable area for Filter Card (only) -->
     <ScrollView
         android:id="@+id/scrollViewTop"
         android:layout_width="0dp"
@@ -68,19 +68,7 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <!-- Selected Date Display -->
-                    <TextView
-                        android:id="@+id/tvSelectedDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:padding="8dp"
-                        android:text="Date: Loading..."
-                        android:textColor="#1E3A8A"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <!-- Session Spinner -->
+                    <!-- Session -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/CustomTextInputLayout"
                         android:layout_width="match_parent"
@@ -101,7 +89,7 @@
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Medium Spinner -->
+                    <!-- Medium -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/CustomTextInputLayout"
                         android:layout_width="match_parent"
@@ -123,7 +111,7 @@
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Class Spinner -->
+                    <!-- Class -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/CustomTextInputLayout"
                         android:layout_width="match_parent"
@@ -145,7 +133,7 @@
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Section Spinner -->
+                    <!-- Section -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/CustomTextInputLayout"
                         android:layout_width="match_parent"
@@ -167,13 +155,76 @@
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Load Students Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnLoadStudents"
+                    <!-- Year + Month row -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:text="Load Students"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/CustomTextInputLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Year"
+                            app:endIconMode="dropdown_menu">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/spinnerYear"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:focusable="false"
+                                android:inputType="none"
+                                android:padding="14dp"
+                                android:popupBackground="#FFFFFF"
+                                android:textColor="#000000"
+                                android:textSize="15sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <Space
+                            android:layout_width="12dp"
+                            android:layout_height="wrap_content" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/CustomTextInputLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Month"
+                            app:endIconMode="dropdown_menu">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/spinnerMonth"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:focusable="false"
+                                android:inputType="none"
+                                android:padding="14dp"
+                                android:popupBackground="#FFFFFF"
+                                android:textColor="#000000"
+                                android:textSize="15sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <!-- Progress Bar -->
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:visibility="gone" />
+
+                    <!-- Generate PDF Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGeneratePDF"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="Generate PDF"
                         android:textAllCaps="false"
                         android:textColor="#FFFFFF"
                         android:textSize="16sp"
@@ -182,14 +233,6 @@
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- Progress Bar (same as original) -->
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

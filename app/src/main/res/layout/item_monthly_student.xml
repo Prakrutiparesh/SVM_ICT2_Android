@@ -1,0 +1,21 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/tvRollName"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="1 - John Doe"
+        android:textSize="14sp"/>
+
+    <LinearLayout
+        android:id="@+id/llStatusContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"/>
+</LinearLayout>

@@ -7,7 +7,7 @@ import com.example.ict2_project.models.*
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
-
+import com.google.gson.JsonElement
 interface ApiService {
 
     // ---------- EXISTING METHODS (unchanged, return Call<T>) ----------
@@ -44,6 +44,7 @@ interface ApiService {
 
     @GET("api/Classes")
     fun getClassesByMedium(@Query("medium") medium: String): Call<List<Class>>
+
     // ---------- NEW ATTENDANCE METHODS (suspend for AttendanceActivity) ----------
     @GET("api/StudentAttendances/students")
     suspend fun getStudentsForAttendance(
@@ -56,4 +57,24 @@ interface ApiService {
     @POST("api/StudentAttendances/bulk")
     suspend fun submitAttendance(@Body request: BulkAttendanceRequest): Response<BulkAttendanceResponse>
 
+    // Inside ApiService.kt
+
+    @GET("api/StudentAttendances/advanced-report")
+    suspend fun getDailyAttendanceReport(
+        @Query("sessionId") sessionId: Int,
+        @Query("medium") medium: String? = null,
+        @Query("classId") classId: Int? = null,
+        @Query("sectionId") sectionId: Int? = null,
+        @Query("date") date: String   // yyyy-MM-dd
+    ): Response<DailyReportResponse>
+
+    @GET("api/StudentAttendances/monthly-report")
+    suspend fun getMonthlyAttendanceReportRawJson(
+        @Query("sessionId") sessionId: Int,
+        @Query("medium") medium: String? = null,
+        @Query("classId") classId: Int? = null,
+        @Query("sectionId") sectionId: Int? = null,
+        @Query("year") year: Int,
+        @Query("month") month: Int
+    ): Response<JsonElement>
 }

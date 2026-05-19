@@ -1,19 +1,15 @@
 package com.example.ict2_project.activities
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ict2_project.R
-import com.example.ict2_project.adapters.StudentAttendanceAdapter
 import com.example.ict2_project.api.ApiService
 import com.example.ict2_project.api.RetrofitClient
 import com.example.ict2_project.databinding.ActivityAttendanceBinding
 import com.example.ict2_project.models.*
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,13 +31,6 @@ class AttendanceActivity : AppCompatActivity() {
     private var selectedClassId: Int? = null
     private var selectedSectionId: Int? = null
 
-    // API uses yyyy-MM-dd
-    private val selectedDate: String by lazy {
-        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Calendar.getInstance().time)
-    }
-
-    private lateinit var adapter: StudentAttendanceAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAttendanceBinding.inflate(layoutInflater)
@@ -51,23 +40,12 @@ class AttendanceActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         apiService = RetrofitClient.instance
 
-        // Hide student list card initially
-        binding.cardStudentListContainer.visibility = View.GONE
-
-        // Show current date in dd-MM-yyyy format
         val displayDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val displayDate = displayDateFormat.format(Calendar.getInstance().time)
         binding.tvSelectedDate.text = "Date: $displayDate"
 
-        setupRecyclerView()
         loadSessions()
         setupButtons()
-    }
-
-    private fun setupRecyclerView() {
-        adapter = StudentAttendanceAdapter(emptyList<Student>()) { _, _ -> }
-        binding.rvStudents.layoutManager = LinearLayoutManager(this)
-        binding.rvStudents.adapter = adapter
     }
 
     private fun loadSessions() {
@@ -82,13 +60,17 @@ class AttendanceActivity : AppCompatActivity() {
                         sessionNames
                     )
                     binding.spinnerSession.setAdapter(adapter)
+
                     if (sessionList.isNotEmpty()) {
                         binding.spinnerSession.setText(sessionNames[0], false)
                         selectedSessionId = sessionList[0].sessionId
+                        loadMediums()
                     }
+
                     binding.spinnerSession.setOnItemClickListener { _, _, position, _ ->
                         selectedSessionId = sessionList[position].sessionId
-                        loadMediums()
+                        clearClassAndSection()
+                        loadMediums()  // mediums reload, jo class bhi reload karega naye session ke liye
                     }
                 } else {
                     Toast.makeText(this@AttendanceActivity, "No sessions found", Toast.LENGTH_SHORT)
@@ -109,12 +91,13 @@ class AttendanceActivity : AppCompatActivity() {
         binding.spinnerMedium.setAdapter(adapter)
         binding.spinnerMedium.setText(mediums[0], false)
         selectedMedium = mediums[0]
-        loadClasses()
+
+        loadClasses()   // medium set hone ke baad classes load
+
         binding.spinnerMedium.setOnItemClickListener { _, _, position, _ ->
             selectedMedium = mediums[position]
             clearClassAndSection()
-            binding.cardStudentListContainer.visibility = View.GONE   // Hide card on medium change
-            loadClasses()
+            loadClasses()   // naye medium ke liye classes reload
         }
     }
 
@@ -123,18 +106,32 @@ class AttendanceActivity : AppCompatActivity() {
         selectedSectionId = null
         classList = emptyList()
         sectionList = emptyList()
+
         binding.spinnerClass.setText("", false)
         binding.spinnerSection.setText("", false)
-        adapter.updateStudents(emptyList())
-        binding.cardStudentListContainer.visibility = View.GONE   // Hide card
-        binding.btnSubmitAttendance.isEnabled = false
+
+        binding.spinnerClass.setAdapter(
+            ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
+        )
+        binding.spinnerSection.setAdapter(
+            ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
+        )
     }
 
     private fun loadClasses() {
-        apiService.getClasses(selectedMedium).enqueue(object : Callback<List<Class>> {
+        if (selectedSessionId == null || selectedMedium.isNullOrEmpty()) return
+
+        // Pehle saare classes fetch karo medium ke hisaab se (jaise DailyAttendanceReportActivity mein)
+        apiService.getClasses(selectedMedium!!).enqueue(object : Callback<List<Class>> {
             override fun onResponse(call: Call<List<Class>>, response: Response<List<Class>>) {
                 if (response.isSuccessful && !response.body().isNullOrEmpty()) {
-                    classList = response.body()!!
+                    // 🟢 Filter classes by selected session (same as DailyAttendanceReportActivity)
+                    val allClasses = response.body()!!
+                    classList = allClasses.filter {
+                        it.sessionId == selectedSessionId &&
+                                it.medium.equals(selectedMedium, ignoreCase = true)
+                    }
+
                     val classNames = classList.map { it.className }
                     val adapter = ArrayAdapter(
                         this@AttendanceActivity,
@@ -142,6 +139,15 @@ class AttendanceActivity : AppCompatActivity() {
                         classNames
                     )
                     binding.spinnerClass.setAdapter(adapter)
+
+                    if (classNames.isEmpty()) {
+                        Toast.makeText(
+                            this@AttendanceActivity,
+                            "No classes found for this session & medium",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
                     binding.spinnerClass.setOnItemClickListener { _, _, position, _ ->
                         selectedClassId = classList[position].classId
                         clearSection()
@@ -150,7 +156,7 @@ class AttendanceActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                         this@AttendanceActivity,
-                        "No classes found for ${selectedMedium}",
+                        "No classes found for $selectedMedium",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -167,13 +173,14 @@ class AttendanceActivity : AppCompatActivity() {
         selectedSectionId = null
         sectionList = emptyList()
         binding.spinnerSection.setText("", false)
-        adapter.updateStudents(emptyList())
-        binding.cardStudentListContainer.visibility = View.GONE   // Hide card
-        binding.btnSubmitAttendance.isEnabled = false
+        binding.spinnerSection.setAdapter(
+            ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
+        )
     }
 
     private fun loadSections() {
         if (selectedClassId == null) return
+
         apiService.getSectionsByClass(selectedClassId!!).enqueue(object : Callback<List<Section>> {
             override fun onResponse(call: Call<List<Section>>, response: Response<List<Section>>) {
                 if (response.isSuccessful && !response.body().isNullOrEmpty()) {
@@ -185,6 +192,7 @@ class AttendanceActivity : AppCompatActivity() {
                         sectionNames
                     )
                     binding.spinnerSection.setAdapter(adapter)
+
                     binding.spinnerSection.setOnItemClickListener { _, _, position, _ ->
                         selectedSectionId = sectionList[position].sectionId
                     }
@@ -211,95 +219,18 @@ class AttendanceActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
-            loadStudents()
-        }
-
-        binding.btnSubmitAttendance.setOnClickListener {
-            submitAttendance()
-        }
-    }
-
-    private fun loadStudents() {
-        lifecycleScope.launch {
-            try {
-                val students = apiService.getStudentsForAttendance(
-                    sessionId = selectedSessionId!!,
-                    medium = selectedMedium,
-                    classId = selectedClassId,
-                    sectionId = selectedSectionId
-                )
-                adapter.updateStudents(students)
-                binding.btnSubmitAttendance.isEnabled = students.isNotEmpty()
-                if (students.isNotEmpty()) {
-                    binding.cardStudentListContainer.visibility =
-                        View.VISIBLE   // Show card only when students exist
-                } else {
-                    binding.cardStudentListContainer.visibility = View.GONE
-                    Toast.makeText(
-                        this@AttendanceActivity,
-                        "No students found for selected criteria",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(
-                    this@AttendanceActivity,
-                    "Failed to load students: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+            val className = classList.find { it.classId == selectedClassId }?.className ?: ""
+            val sectionName =
+                sectionList.find { it.sectionId == selectedSectionId }?.sectionName ?: ""
+            val intent = Intent(this, StudentListActivity::class.java).apply {
+                putExtra("SESSION_ID", selectedSessionId!!)
+                putExtra("CLASS_ID", selectedClassId!!)
+                putExtra("SECTION_ID", selectedSectionId!!)
+                putExtra("MEDIUM", selectedMedium)
+                putExtra("CLASS_NAME", className)
+                putExtra("SECTION_NAME", sectionName)
             }
-        }
-    }
-
-    private fun submitAttendance() {
-        val attendanceItems = adapter.getAllStatuses().map { (studentId, status) ->
-            AttendanceItem(studentId, status)
-        }
-
-        val request = BulkAttendanceRequest(
-            classId = selectedClassId!!,
-            sectionId = selectedSectionId!!,
-            sessionId = selectedSessionId!!,
-            attendanceDate = selectedDate,
-            attendances = attendanceItems
-        )
-
-        lifecycleScope.launch {
-            try {
-                val response = apiService.submitAttendance(request)
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null && body.alreadyExists) {
-                        Toast.makeText(
-                            this@AttendanceActivity,
-                            "Attendance already marked for this class/section/date",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            this@AttendanceActivity,
-                            "Attendance saved successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        finish()
-                    }
-                } else if (response.code() == 409) {
-                    Toast.makeText(
-                        this@AttendanceActivity,
-                        "Attendance already marked for this class",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        this@AttendanceActivity,
-                        "Failed: ${response.code()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(this@AttendanceActivity, "Error: ${e.message}", Toast.LENGTH_SHORT)
-                    .show()
-            }
+            startActivity(intent)
         }
     }
 

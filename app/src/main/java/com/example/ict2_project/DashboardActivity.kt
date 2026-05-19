@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.example.ict2_project.activities.AttendanceActivity
+import com.example.ict2_project.activities.AttendanceReportActivity   // new activity
 import com.google.android.material.card.MaterialCardView
 
 class DashboardActivity : AppCompatActivity() {
@@ -18,6 +19,7 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var tvWelcome: TextView
     private lateinit var cardAttendance: MaterialCardView
     private lateinit var cardTimetable: MaterialCardView
+    private lateinit var cardAttendanceReport: MaterialCardView   // <-- add this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,7 @@ class DashboardActivity : AppCompatActivity() {
         // Find cards
         cardAttendance = findViewById(R.id.cardAttendance)
         cardTimetable = findViewById(R.id.cardTimetable)
+        cardAttendanceReport = findViewById(R.id.cardAttendanceReport)   // <-- find
 
         // Set click listeners
         cardAttendance.setOnClickListener {
@@ -43,8 +46,12 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         cardTimetable.setOnClickListener {
-            // Open TimeTableActivity (create this activity if not exists)
             startActivity(Intent(this, TimeTableActivity::class.java))
+        }
+
+        // NEW: Attendance Report click
+        cardAttendanceReport.setOnClickListener {
+            startActivity(Intent(this, AttendanceReportActivity::class.java))
         }
     }
 
@@ -60,14 +67,12 @@ class DashboardActivity : AppCompatActivity() {
                     "setOptionalIconsVisible",
                     Boolean::class.javaPrimitiveType
                 )
-
                 method.isAccessible = true
                 method.invoke(menu, true)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -79,7 +84,6 @@ class DashboardActivity : AppCompatActivity() {
                 finish()
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }

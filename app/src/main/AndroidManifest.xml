@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -11,10 +13,26 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ICT2_Project"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".AttendanceResultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.StudentListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AttendanceReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MonthlyAttendanceReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DailyAttendanceReportActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.AttendanceActivity"
             android:exported="false" />
@@ -23,9 +41,7 @@
             android:exported="false" />
         <activity
             android:name=".ResetPasswordActivity"
-            android:exported="false" /> <!-- <activity -->
-        <!-- android:name=".DashboardActivity" -->
-        <!-- android:exported="false" /> -->
+            android:exported="false" />
         <activity
             android:name=".DashboardActivity"
             android:theme="@style/Theme.ICT2_Project" />
