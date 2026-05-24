@@ -6,13 +6,15 @@
     android:background="@drawable/bg_gradient"
     android:orientation="vertical">
 
-    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#1E3A8A"
-        android:elevation="6dp">
+        android:elevation="6dp"
+        app:navigationContentDescription="Back"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:navigationIconTint="#FFFFFF">
 
         <TextView
             android:layout_width="wrap_content"

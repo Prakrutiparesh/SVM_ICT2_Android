@@ -45,7 +45,10 @@ class MonthlyAttendanceReportActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_monthly_attendance_report)
-
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false) // because we have custom title in TextViewS
         apiService = RetrofitClient.instance
         initViews()
         setupSpinners()
@@ -695,6 +698,11 @@ class MonthlyAttendanceReportActivity : AppCompatActivity() {
 
             date.take(10)
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     private fun toast(msg: String) =

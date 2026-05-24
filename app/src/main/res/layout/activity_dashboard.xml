@@ -61,7 +61,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <!-- Row for two cards: Attendance and Time Table -->
+            <!-- Row 1: Attendance and Time Table -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,6 +86,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:minHeight="140dp"
                         android:orientation="vertical"
                         android:padding="16dp">
 
@@ -130,6 +131,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:minHeight="140dp"
                         android:orientation="vertical"
                         android:padding="16dp">
 
@@ -158,51 +160,106 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <!-- New Row: Attendance Report Card (spans full width) -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardAttendanceReport"
+            <!-- Row 2: Attendance Report and Notices & Events (side by side) -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
+                android:gravity="center"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- Attendance Report Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardAttendanceReport"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@android:drawable/ic_menu_report_image"
-                        app:tint="#1E3A8A" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Attendance Report"
-                        android:textColor="#1E3A8A"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_menu_report_image"
+                            app:tint="#1E3A8A" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="Attendance Report"
+                            android:textColor="#1E3A8A"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Generate &amp; View"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Notices & Events Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardNoticesEvents"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Generate &amp; View Reports"
-                        android:textColor="#666666"
-                        android:textSize="12sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        android:gravity="center"
+                        android:minHeight="140dp"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_menu_info_details"
+                            app:tint="#1E3A8A" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="Notice-Event"
+                            android:textColor="#1E3A8A"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View latest updates"
+                            android:textAlignment="center"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
         </LinearLayout>
-
     </ScrollView>
-
 </LinearLayout>

@@ -12,9 +12,13 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/cardLightBg"
         android:elevation="4dp"
+        android:title="Mark Attendance"
+        android:titleTextColor="#1E3A8A"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationContentDescription="Back"
+        app:navigationIcon="?attr/homeAsUpIndicator">
 
         <TextView
             android:layout_width="wrap_content"

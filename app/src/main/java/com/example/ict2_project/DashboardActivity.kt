@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.example.ict2_project.activities.AttendanceActivity
 import com.example.ict2_project.activities.AttendanceReportActivity   // new activity
+import com.example.ict2_project.activities.UpdatesListActivity
 import com.google.android.material.card.MaterialCardView
 
 class DashboardActivity : AppCompatActivity() {
@@ -53,6 +54,10 @@ class DashboardActivity : AppCompatActivity() {
         cardAttendanceReport.setOnClickListener {
             startActivity(Intent(this, AttendanceReportActivity::class.java))
         }
+        val cardNoticesEvents = findViewById<MaterialCardView>(R.id.cardNoticesEvents)
+        cardNoticesEvents.setOnClickListener {
+            startActivity(Intent(this, UpdatesListActivity::class.java))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -84,6 +89,7 @@ class DashboardActivity : AppCompatActivity() {
                 finish()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

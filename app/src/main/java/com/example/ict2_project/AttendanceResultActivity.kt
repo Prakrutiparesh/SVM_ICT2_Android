@@ -3,6 +3,7 @@ package com.example.ict2_project
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ict2_project.models.AttendanceTotals
@@ -16,6 +17,13 @@ class AttendanceResultActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_attendance_result)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        toolbar.navigationIcon?.setTint(getColor(android.R.color.white))
 
         // Get data from Intent
         val students =
@@ -49,5 +57,11 @@ class AttendanceResultActivity : AppCompatActivity() {
             rvStudents.visibility = android.view.View.VISIBLE
             tvNoData.visibility = android.view.View.GONE
         }
+    }
+
+    // ✅ Back button click handler
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }

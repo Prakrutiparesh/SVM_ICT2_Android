@@ -37,7 +37,9 @@ class AttendanceActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
         apiService = RetrofitClient.instance
 
         val displayDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())

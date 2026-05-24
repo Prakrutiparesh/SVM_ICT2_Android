@@ -8,6 +8,7 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 import com.google.gson.JsonElement
+
 interface ApiService {
 
     // ---------- EXISTING METHODS (unchanged, return Call<T>) ----------
@@ -77,4 +78,7 @@ interface ApiService {
         @Query("year") year: Int,
         @Query("month") month: Int
     ): Response<JsonElement>
+
+    @GET("api/Updates/active")
+    suspend fun getActiveUpdates(): Response<List<Updates>>
 }

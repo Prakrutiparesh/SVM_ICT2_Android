@@ -12,7 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/cardLightBg"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        android:title="Attendance Reports"
+        android:titleTextColor="#1E3A8A"
+        app:navigationContentDescription="Back"
+        app:navigationIcon="?attr/homeAsUpIndicator">
 
         <TextView
             android:layout_width="wrap_content"

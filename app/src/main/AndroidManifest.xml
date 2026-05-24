@@ -19,6 +19,9 @@
         android:theme="@style/Theme.ICT2_Project"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.UpdatesListActivity"
+            android:exported="false" />
+        <activity
             android:name=".AttendanceResultActivity"
             android:exported="false" />
         <activity
