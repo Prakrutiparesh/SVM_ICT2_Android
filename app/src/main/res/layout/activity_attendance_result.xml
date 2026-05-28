@@ -26,7 +26,8 @@
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <ScrollView
+    <!-- 🔥 FIX: Use NestedScrollView instead of ScrollView -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -62,7 +63,6 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <!-- Total Students -->
                     <TextView
                         android:id="@+id/tvTotalStudents"
                         android:layout_width="wrap_content"
@@ -73,7 +73,6 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
-                    <!-- Present / Absent Cards -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -111,7 +110,6 @@
                         android:layout_marginVertical="12dp"
                         android:background="#E0E0E0" />
 
-                    <!-- Gender -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -148,12 +146,11 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <!-- RecyclerView -->
+            <!-- 🔥 FIX: RecyclerView with wrap_content (will show ALL items) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvAttendanceList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
                 android:nestedScrollingEnabled="false" />
 
             <!-- No Data -->
@@ -168,6 +165,6 @@
                 android:visibility="gone" />
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

@@ -60,7 +60,10 @@ class ResetPasswordActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val body = response.body()
-                    showMessage(body?.message ?: "OTP sent! Check your email (or see console)", isError = false)
+                    showMessage(
+                        body?.message ?: "OTP sent! Check your email (or see console)",
+                        isError = false
+                    )
                     // Show OTP and new password fields
                     otpLayout.visibility = View.VISIBLE
                     newPasswordLayout.visibility = View.VISIBLE
@@ -121,9 +124,18 @@ class ResetPasswordActivity : AppCompatActivity() {
         })
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
     private fun showMessage(msg: String, isError: Boolean) {
         tvMessage.text = msg
-        tvMessage.setTextColor(if (isError) resources.getColor(android.R.color.holo_red_dark) else resources.getColor(android.R.color.holo_green_dark))
+        tvMessage.setTextColor(
+            if (isError) resources.getColor(android.R.color.holo_red_dark) else resources.getColor(
+                android.R.color.holo_green_dark
+            )
+        )
         tvMessage.visibility = View.VISIBLE
     }
 }

@@ -16,7 +16,7 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ICT2_Project"
+        android:theme="@style/Theme.SchoolApp"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".activities.UpdatesListActivity"
@@ -47,7 +47,7 @@
             android:exported="false" />
         <activity
             android:name=".DashboardActivity"
-            android:theme="@style/Theme.ICT2_Project" />
+            android:theme="@style/Theme.SchoolApp" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

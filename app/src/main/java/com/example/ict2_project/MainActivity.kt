@@ -45,16 +45,22 @@ class MainActivity : AppCompatActivity() {
         btnLogin = findViewById(R.id.btnLogin)
         progressBar = findViewById(R.id.progressBar)
         tvError = findViewById(R.id.tvError)
+        val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)   // ✅ get reference
 
         sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
 
         // Check if already logged in
         if (sharedPreferences.getBoolean("isLoggedIn", false)) {
-            // Redirect to Dashboard (create DashboardActivity later)
             startActivity(Intent(this, DashboardActivity::class.java))
             finish()
         }
 
+        // ✅ Forgot password click listener – works immediately, no login click needed
+        tvForgotPassword.setOnClickListener {
+            startActivity(Intent(this, ResetPasswordActivity::class.java))
+        }
+
+        // Login button click listener
         btnLogin.setOnClickListener {
             val username = etUsername.text.toString().trim()
             val password = etPassword.text.toString().trim()
@@ -69,10 +75,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             performLogin(username, password)
-            val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
-            tvForgotPassword.setOnClickListener {
-                startActivity(Intent(this, ResetPasswordActivity::class.java))
-            }
         }
     }
 
@@ -115,7 +117,6 @@ class MainActivity : AppCompatActivity() {
                         showError("Invalid response from server")
                     }
                 } else {
-                    // Handling 401 Unauthorized or other errors
                     when (response.code()) {
                         401 -> showError("Invalid username/email or password")
                         else -> showError("Login failed: ${response.message()}")

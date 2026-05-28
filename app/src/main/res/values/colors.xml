@@ -8,4 +8,25 @@
     <color name="present_green">#4CAF50</color>
     <color name="absent_red">#F44336</color>
     <color name="primary_blue">#1E3A8A</color>
+    <color name="primary">#1E3A8A</color>      <!-- Deep Blue -->
+    <color name="primary_dark">#0F2B6D</color>
+    <color name="primary_light">#3B82F6</color>
+
+    <!-- Secondary Colors -->
+    <color name="secondary">#10B981</color>     <!-- Success Green -->
+    <color name="secondary_dark">#059669</color>
+
+    <!-- Surface & Background -->
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F8FAFC</color>
+    <color name="background">#F1F5F9</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+
+    <!-- Status Colors -->
+    <color name="error">#EF4444</color>
+    <color name="warning">#F59E0B</color>
+    <color name="success">#10B981</color>
 </resources>
