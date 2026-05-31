@@ -7,16 +7,29 @@ import com.google.gson.annotations.SerializedName
 // ==============================
 
 data class Student(
-    @SerializedName("studentId") val studentId: Int,
-    @SerializedName("firstName") val firstName: String,
-    @SerializedName("lastName") val lastName: String,
-    @SerializedName("rollNo") val rollNo: Int,
-    @SerializedName("className") val className: String?,
-    @SerializedName("sectionName") val sectionName: String?,
-    @SerializedName("admissionNo") val admissionNo: String?
+    @SerializedName(value = "StudentId", alternate = ["studentId"])
+    val studentId: Int,
+
+    @SerializedName(value = "FirstName", alternate = ["firstName"])
+    val firstName: String,
+
+    @SerializedName(value = "LastName", alternate = ["lastName"])
+    val lastName: String,
+
+    @SerializedName(value = "RollNo", alternate = ["rollNo"])
+    val rollNo: Int,
+
+    @SerializedName(value = "ClassName", alternate = ["className"])
+    val className: String?,
+
+    @SerializedName(value = "SectionName", alternate = ["sectionName"])
+    val sectionName: String?,
+
+    @SerializedName(value = "AdmissionNo", alternate = ["admissionNo"])
+    val admissionNo: String?
 ) {
     val fullName: String
-        get() = "$firstName $lastName".trim()
+        get() = "${firstName} ${lastName}".trim()
 }
 
 // ==============================
@@ -27,13 +40,13 @@ data class BulkAttendanceRequest(
     @SerializedName("classId") val classId: Int,
     @SerializedName("sectionId") val sectionId: Int,
     @SerializedName("sessionId") val sessionId: Int,
-    @SerializedName("attendanceDate") val attendanceDate: String, // "yyyy-MM-dd"
+    @SerializedName("attendanceDate") val attendanceDate: String,
     @SerializedName("attendances") val attendances: List<AttendanceItem>
 )
 
 data class AttendanceItem(
     @SerializedName("studentId") val studentId: Int,
-    @SerializedName("status") val status: String  // "Present", "Absent", "Late"
+    @SerializedName("status") val status: String
 )
 
 data class BulkAttendanceResponse(
@@ -42,11 +55,24 @@ data class BulkAttendanceResponse(
 )
 
 data class AttendanceReport(
-    @SerializedName("id") val id: Int,
-    @SerializedName("studentId") val studentId: Int,
-    @SerializedName("studentName") val studentName: String,
-    @SerializedName("attendanceDate") val attendanceDate: String,
-    @SerializedName("status") val status: String,
-    @SerializedName("className") val className: String?,
-    @SerializedName("sectionName") val sectionName: String?
+    @SerializedName(value = "Id", alternate = ["id"])
+    val id: Int,
+
+    @SerializedName(value = "StudentId", alternate = ["studentId"])
+    val studentId: Int,
+
+    @SerializedName(value = "StudentName", alternate = ["studentName"])
+    val studentName: String,
+
+    @SerializedName(value = "AttendanceDate", alternate = ["attendanceDate"])
+    val attendanceDate: String,
+
+    @SerializedName(value = "Status", alternate = ["status"])
+    val status: String,
+
+    @SerializedName(value = "ClassName", alternate = ["className"])
+    val className: String?,
+
+    @SerializedName(value = "SectionName", alternate = ["sectionName"])
+    val sectionName: String?
 )

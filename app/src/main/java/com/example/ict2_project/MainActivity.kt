@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                                 putBoolean("isLoggedIn", true)
                                 putInt("userId", user.userId)
                                 putString("username", user.username)
-                                putString("fullName", user.fullName)
+                                putString("fullName", user.fullName ?: user.username)
                                 putInt("groupId", user.groupId ?: 0)
                                 apply()
                             }

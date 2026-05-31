@@ -14,6 +14,7 @@ data class Timetable(
     @SerializedName("startTime") val startTime: String,
     @SerializedName("endTime") val endTime: String,
     @SerializedName("isBreak") val isBreak: Boolean?,
+
     @SerializedName("subject") val subject: Subject?,
     @SerializedName("staff") var staff: Staff?,
     @SerializedName("session") val session: Session?,
@@ -21,35 +22,57 @@ data class Timetable(
     @SerializedName("section") val section: Section?
 )
 
-data class Subject(
-    @SerializedName("subjectId") val subjectId: Int,
-    @SerializedName("subjectName") val subjectName: String
-)
-
 data class Staff(
-    @SerializedName("staffId") val staffId: Int,
-    @SerializedName("firstName") val firstName: String?,
-    @SerializedName("lastName") val lastName: String?
+    @SerializedName(value = "StaffId", alternate = ["staffId"])
+    val staffId: Int,
+
+    @SerializedName(value = "FirstName", alternate = ["firstName"])
+    val firstName: String?,
+
+    @SerializedName(value = "LastName", alternate = ["lastName"])
+    val lastName: String?
 ) {
     val fullName: String
-        get() = "$firstName $lastName".trim()
+        get() = "${firstName ?: ""} ${lastName ?: ""}".trim()
 }
 
+data class Subject(
+    @SerializedName(value = "SubjectId", alternate = ["subjectId"])
+    val subjectId: Int,
+
+    @SerializedName(value = "SubjectName", alternate = ["subjectName"])
+    val subjectName: String
+)
+
 data class Session(
-    @SerializedName("sessionId") val sessionId: Int,
-    @SerializedName("sessionName") val sessionName: String
+    @SerializedName(value = "SessionId", alternate = ["sessionId"])
+    val sessionId: Int,
+
+    @SerializedName(value = "SessionName", alternate = ["sessionName"])
+    val sessionName: String
 )
 
 data class Class(
-    @SerializedName("classId") val classId: Int,
-    @SerializedName("className") val className: String,
-    @SerializedName("medium") val medium: String? = null,
-    @SerializedName("sessionId")  val sessionId: Int? = null
+    @SerializedName("ClassId", alternate = ["classId"])
+    val classId: Int,
 
+    @SerializedName("ClassName", alternate = ["className"])
+    val className: String,
+
+    @SerializedName("Medium", alternate = ["medium"])
+    val medium: String? = null,
+
+    @SerializedName("SessionId", alternate = ["sessionId"])
+    val sessionId: Int? = null
 )
 
 data class Section(
-    @SerializedName("sectionId") val sectionId: Int,
-    @SerializedName("sectionName") val sectionName: String,
-    @SerializedName("classId") val classId: Int
+    @SerializedName(value = "SectionId", alternate = ["sectionId"])
+    val sectionId: Int,
+
+    @SerializedName(value = "SectionName", alternate = ["sectionName"])
+    val sectionName: String,
+
+    @SerializedName(value = "ClassId", alternate = ["classId"])
+    val classId: Int
 )
