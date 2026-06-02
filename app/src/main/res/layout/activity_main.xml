@@ -96,7 +96,9 @@
                     android:hint="Password"
                     app:boxStrokeColor="@color/primary"
                     app:endIconMode="password_toggle"
+                    app:endIconTint="@color/primary_light"
                     app:hintTextColor="@color/primary"
+                    android:id="@+id/tilPassword"
                     app:startIconDrawable="@drawable/ic_lock_outline"
                     app:startIconTint="@color/primary_light">
 
@@ -106,8 +108,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
                         android:textColor="@color/text_primary" />
-                </com.google.android.material.textfield.TextInputLayout>
 
+                </com.google.android.material.textfield.TextInputLayout>
                 <!-- Login Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogin"

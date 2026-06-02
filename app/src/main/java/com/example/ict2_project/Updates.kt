@@ -15,10 +15,12 @@ data class Updates(
     @SerializedName(value = "CreatedAt", alternate = ["createdAt"])
     val createdAt: String? = null,
 
-    // ⚠️ IMPORTANT: backend usually returns int (1/0), not string
     @SerializedName(value = "Status", alternate = ["status"])
     val status: Int? = null,
 
     @SerializedName(value = "FilePath", alternate = ["filePath"])
-    val filePath: String? = null
+    val filePath: String? = null,
+
+    @SerializedName(value = "Category", alternate = ["category"])
+    val category: String? = null
 )

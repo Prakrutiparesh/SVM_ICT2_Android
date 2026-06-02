@@ -1,8 +1,10 @@
 package com.example.ict2_project
 
+
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -10,11 +12,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.ict2_project.R          // ✅ ADD THIS LINE
 import com.example.ict2_project.api.RetrofitClient
 import com.example.ict2_project.models.LoginRequest
 import com.example.ict2_project.models.User
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,8 +49,9 @@ class MainActivity : AppCompatActivity() {
         btnLogin = findViewById(R.id.btnLogin)
         progressBar = findViewById(R.id.progressBar)
         tvError = findViewById(R.id.tvError)
-        val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)   // ✅ get reference
-
+        val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
+        val tilPassword = findViewById<TextInputLayout>(R.id.tilPassword)
+        fixPasswordToggle(tilPassword)
         sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
 
         // Check if already logged in
@@ -130,6 +135,27 @@ class MainActivity : AppCompatActivity() {
                 showError("Network error: ${t.localizedMessage}")
             }
         })
+    }
+
+    private fun fixPasswordToggle(textInputLayout: TextInputLayout) {
+        val editText = textInputLayout.editText as? TextInputEditText ?: return
+        val endIconView =
+            textInputLayout.findViewById<View>(com.google.android.material.R.id.text_input_end_icon)
+
+        endIconView?.setOnClickListener {
+            // Manually toggle the password visibility
+            val selection = editText.selectionEnd
+            if (editText.transformationMethod == null) {
+                // Currently visible -> hide it
+                editText.transformationMethod = PasswordTransformationMethod.getInstance()
+                endIconView.isSelected = false
+            } else {
+                // Currently hidden -> show it
+                editText.transformationMethod = null
+                endIconView.isSelected = true
+            }
+            editText.setSelection(selection)
+        }
     }
 
     private fun showError(message: String) {

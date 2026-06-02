@@ -37,16 +37,21 @@ class UpdatesListActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val response = apiService.getActiveUpdates()
-                Log.d("API_RAW", "Code: ${response.code()}")
-                Log.d("API_RAW", "Body: ${response.body()}")
-
                 if (response.isSuccessful) {
-                    val updates = response.body()
-                    if (updates.isNullOrEmpty()) {
+                    val allUpdates = response.body() ?: emptyList()
+
+                    // ✅ Filter only staff notices
+                    val staffNotices = allUpdates.filter { update ->
+                        update.category.equals("staffNotice", ignoreCase = true)
+                    }
+
+                    if (staffNotices.isEmpty()) {
                         binding.tvEmpty.visibility = View.VISIBLE
                         binding.recyclerViewUpdates.visibility = View.GONE
                     } else {
-                        binding.recyclerViewUpdates.adapter = UpdatesAdapter(updates)
+                        binding.recyclerViewUpdates.adapter = UpdatesAdapter(staffNotices)
+                        binding.recyclerViewUpdates.visibility = View.VISIBLE
+                        binding.tvEmpty.visibility = View.GONE
                     }
                 } else {
                     Toast.makeText(
