@@ -6,25 +6,40 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.ict2_project.activities.AttendanceActivity
-import com.example.ict2_project.activities.AttendanceReportActivity   // new activity
 import com.example.ict2_project.activities.UpdatesListActivity
-import com.google.android.material.card.MaterialCardView
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class DashboardActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var tvWelcome: TextView
-    private lateinit var cardAttendance: MaterialCardView
-    private lateinit var cardTimetable: MaterialCardView
-    private lateinit var cardAttendanceReport: MaterialCardView   // <-- add this
+    private lateinit var cardAttendance: View
+    private lateinit var cardTimetable: View
+    private lateinit var cardAttendanceReport: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_dashboard)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -32,31 +47,78 @@ class DashboardActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
-        tvWelcome = findViewById(R.id.tvWelcome)
-        val fullName = sharedPreferences.getString("fullName", "User")
-        tvWelcome.text = "Welcome, $fullName!"
+        val fullName = sharedPreferences.getString("fullName", "Teacher") ?: "Teacher"
+        val greeting = getGreeting()
 
-        // Find cards
+        tvWelcome = findViewById(R.id.tvWelcome)
+        tvWelcome.text = "$greeting, $fullName!"
+
+        findViewById<TextView>(R.id.tvDate).text =
+            SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault()).format(Date())
+
+        findViewById<TextView>(R.id.tvAvatarInitial).text =
+            fullName.trim().firstOrNull()?.uppercaseChar()?.toString() ?: "T"
+
         cardAttendance = findViewById(R.id.cardAttendance)
         cardTimetable = findViewById(R.id.cardTimetable)
-        cardAttendanceReport = findViewById(R.id.cardAttendanceReport)   // <-- find
+        cardAttendanceReport = findViewById(R.id.cardAttendanceReport)
+        val cardNoticesEvents = findViewById<View>(R.id.cardNoticesEvents)
 
-        // Set click listeners
         cardAttendance.setOnClickListener {
             startActivity(Intent(this, AttendanceActivity::class.java))
         }
-
         cardTimetable.setOnClickListener {
             startActivity(Intent(this, TimeTableActivity::class.java))
         }
-
-        // NEW: Attendance Report click
         cardAttendanceReport.setOnClickListener {
-            startActivity(Intent(this, AttendanceReportActivity::class.java))
+            showReportOptionsSheet()
         }
-        val cardNoticesEvents = findViewById<MaterialCardView>(R.id.cardNoticesEvents)
         cardNoticesEvents.setOnClickListener {
             startActivity(Intent(this, UpdatesListActivity::class.java))
+        }
+
+        animateEntrance()
+    }
+
+    private fun showReportOptionsSheet() {
+        val sheetView = layoutInflater.inflate(R.layout.bottom_sheet_report_options, null)
+        val dialog = BottomSheetDialog(this)
+        dialog.setContentView(sheetView)
+
+        sheetView.findViewById<View>(R.id.optionDaily).setOnClickListener {
+            dialog.dismiss()
+            startActivity(Intent(this, DailyAttendanceReportActivity::class.java))
+        }
+        sheetView.findViewById<View>(R.id.optionMonthly).setOnClickListener {
+            dialog.dismiss()
+            startActivity(Intent(this, MonthlyAttendanceReportActivity::class.java))
+        }
+        dialog.show()
+    }
+
+    private fun getGreeting(): String {
+        return when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
+            in 5..11 -> "Good Morning"
+            in 12..16 -> "Good Afternoon"
+            else -> "Good Evening"
+        }
+    }
+
+    private fun animateEntrance() {
+        val sections = listOf(
+            findViewById<View>(R.id.headerSection),
+            findViewById<View>(R.id.quickActionsSection)
+        )
+        sections.forEachIndexed { index, view ->
+            view.alpha = 0f
+            view.translationY = 48f
+            view.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(450)
+                .setStartDelay(index * 90L)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
         }
     }
 
@@ -89,7 +151,6 @@ class DashboardActivity : AppCompatActivity() {
                 finish()
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }

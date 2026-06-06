@@ -3,35 +3,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient">
+    android:background="@color/screen_bg">
 
-    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/cardLightBg"
-        android:elevation="4dp"
+        android:background="@color/toolbar_bg"
+        android:elevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationContentDescription="Back"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@color/toolbar_text">
 
         <TextView
+            style="@style/AppToolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Time Table"
-            android:textColor="#1E3A8A"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:text="Time Table" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Scrollable area for Filter Card (only) -->
-    <ScrollView
-        android:id="@+id/scrollViewTop"
+    <View
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <ScrollView
+        android:id="@+id/mainScrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -41,155 +49,38 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="16dp">
 
-            <!-- Filter Card -->
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
+                android:background="@drawable/bg_card_border"
+                android:orientation="vertical"
+                android:padding="14dp">
 
-                <LinearLayout
+                <TextView
+                    style="@style/AppSectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Select Filters"
+                    android:textSize="15sp" />
+
+                <include
+                    android:id="@+id/filterDropdowns"
+                    layout="@layout/include_filter_four_dropdowns" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFetchTimetable"
+                    style="@style/AppButtonPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginTop="14dp"
+                    android:text="Show Time Table"
+                    android:textSize="15sp" />
+            </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:text="Select Filters"
-                        android:textColor="#1E3A8A"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <!-- Session -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/CustomTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Session"
-                        app:endIconMode="dropdown_menu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerSession"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:focusable="false"
-                            android:inputType="none"
-                            android:padding="14dp"
-                            android:popupBackground="#FFFFFF"
-                            android:textColor="#000000"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Medium -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/CustomTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Medium"
-                        app:endIconMode="dropdown_menu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:focusable="false"
-                            android:inputType="none"
-                            android:padding="14dp"
-                            android:popupBackground="#FFFFFF"
-                            android:textColor="#000000"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Class -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/CustomTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Class"
-                        app:endIconMode="dropdown_menu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerClass"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:focusable="false"
-                            android:inputType="none"
-                            android:padding="14dp"
-                            android:popupBackground="#FFFFFF"
-                            android:textColor="#000000"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Section -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/CustomTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Section / Division"
-                        app:endIconMode="dropdown_menu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerSection"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:focusable="false"
-                            android:inputType="none"
-                            android:padding="14dp"
-                            android:popupBackground="#FFFFFF"
-                            android:textColor="#000000"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnFetchTimetable"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:text="Show Time Table"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp"
-                        app:backgroundTint="#1E3A8A"
-                        app:cornerRadius="24dp" />
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-    </ScrollView>
-
-    <!-- Table area – takes remaining space (like RecyclerView in sample) -->
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scrollViewTop">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="16dp">
-
-            <!-- HorizontalScrollView for the table -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -201,10 +92,8 @@
                     android:layout_height="wrap_content"
                     android:stretchColumns="*"
                     android:visibility="gone" />
-
             </HorizontalScrollView>
 
-            <!-- No Data TextView -->
             <TextView
                 android:id="@+id/tvNoData"
                 android:layout_width="match_parent"
@@ -212,18 +101,16 @@
                 android:gravity="center"
                 android:padding="20dp"
                 android:text="No timetable found"
-                android:textColor="#666666"
+                android:textColor="@color/text_secondary"
                 android:visibility="gone" />
 
-            <!-- Progress Bar -->
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:visibility="gone" />
-
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

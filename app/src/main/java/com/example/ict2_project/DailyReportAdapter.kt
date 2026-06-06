@@ -1,10 +1,10 @@
 package com.example.ict2_project
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ict2_project.models.DailyReportStudent
 
@@ -19,18 +19,25 @@ class DailyReportAdapter(private var students: List<DailyReportStudent>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val student = students[position]
-        holder.tvName.text = student.fullName
-        holder.tvRoll.text =
-            "Roll No: ${student.rollNo}"
-        holder.tvStatus.text = student.status
+        val context = holder.itemView.context
 
-        // Background and text color for status
+        holder.tvName.text = student.fullName
+        holder.tvRoll.text = "Roll No: ${student.rollNo}"
+        holder.tvAvatar.text =
+            student.fullName.trim().firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+
         if (student.status.equals("Present", true)) {
             holder.tvStatus.text = "Present"
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_present)
+            holder.tvStatus.setTextColor(
+                ContextCompat.getColor(context, R.color.status_present_text)
+            )
         } else {
             holder.tvStatus.text = "Absent"
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_absent)
+            holder.tvStatus.setTextColor(
+                ContextCompat.getColor(context, R.color.status_absent_text)
+            )
         }
     }
 
@@ -45,5 +52,6 @@ class DailyReportAdapter(private var students: List<DailyReportStudent>) :
         val tvName: TextView = itemView.findViewById(R.id.tvStudentName)
         val tvRoll: TextView = itemView.findViewById(R.id.tvRollNo)
         val tvStatus: TextView = itemView.findViewById(R.id.tvStatus)
+        val tvAvatar: TextView = itemView.findViewById(R.id.tvAvatarInitial)
     }
 }

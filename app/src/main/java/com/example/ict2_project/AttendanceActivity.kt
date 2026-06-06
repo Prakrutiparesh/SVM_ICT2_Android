@@ -61,15 +61,15 @@ class AttendanceActivity : AppCompatActivity() {
                         R.layout.dropdown_item,
                         sessionNames
                     )
-                    binding.spinnerSession.setAdapter(adapter)
+                    binding.filterDropdowns.spinnerSession.setAdapter(adapter)
 
                     if (sessionList.isNotEmpty()) {
-                        binding.spinnerSession.setText(sessionNames[0], false)
+                        binding.filterDropdowns.spinnerSession.setText(sessionNames[0], false)
                         selectedSessionId = sessionList[0].sessionId
                         loadMediums()
                     }
 
-                    binding.spinnerSession.setOnItemClickListener { _, _, position, _ ->
+                    binding.filterDropdowns.spinnerSession.setOnItemClickListener { _, _, position, _ ->
                         selectedSessionId = sessionList[position].sessionId
                         clearClassAndSection()
                         loadMediums()  // mediums reload, jo class bhi reload karega naye session ke liye
@@ -90,13 +90,13 @@ class AttendanceActivity : AppCompatActivity() {
     private fun loadMediums() {
         val mediums = listOf("Gujarati", "English")
         val adapter = ArrayAdapter(this, R.layout.dropdown_item, mediums)
-        binding.spinnerMedium.setAdapter(adapter)
-        binding.spinnerMedium.setText(mediums[0], false)
+        binding.filterDropdowns.spinnerMedium.setAdapter(adapter)
+        binding.filterDropdowns.spinnerMedium.setText(mediums[0], false)
         selectedMedium = mediums[0]
 
         loadClasses()   // medium set hone ke baad classes load
 
-        binding.spinnerMedium.setOnItemClickListener { _, _, position, _ ->
+        binding.filterDropdowns.spinnerMedium.setOnItemClickListener { _, _, position, _ ->
             selectedMedium = mediums[position]
             clearClassAndSection()
             loadClasses()   // naye medium ke liye classes reload
@@ -109,13 +109,13 @@ class AttendanceActivity : AppCompatActivity() {
         classList = emptyList()
         sectionList = emptyList()
 
-        binding.spinnerClass.setText("", false)
-        binding.spinnerSection.setText("", false)
+        binding.filterDropdowns.spinnerClass.setText("", false)
+        binding.filterDropdowns.spinnerSection.setText("", false)
 
-        binding.spinnerClass.setAdapter(
+        binding.filterDropdowns.spinnerClass.setAdapter(
             ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
         )
-        binding.spinnerSection.setAdapter(
+        binding.filterDropdowns.spinnerSection.setAdapter(
             ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
         )
     }
@@ -140,7 +140,7 @@ class AttendanceActivity : AppCompatActivity() {
                         R.layout.dropdown_item,
                         classNames
                     )
-                    binding.spinnerClass.setAdapter(adapter)
+                    binding.filterDropdowns.spinnerClass.setAdapter(adapter)
 
                     if (classNames.isEmpty()) {
                         Toast.makeText(
@@ -150,7 +150,7 @@ class AttendanceActivity : AppCompatActivity() {
                         ).show()
                     }
 
-                    binding.spinnerClass.setOnItemClickListener { _, _, position, _ ->
+                    binding.filterDropdowns.spinnerClass.setOnItemClickListener { _, _, position, _ ->
                         selectedClassId = classList[position].classId
                         clearSection()
                         loadSections()
@@ -174,8 +174,8 @@ class AttendanceActivity : AppCompatActivity() {
     private fun clearSection() {
         selectedSectionId = null
         sectionList = emptyList()
-        binding.spinnerSection.setText("", false)
-        binding.spinnerSection.setAdapter(
+        binding.filterDropdowns.spinnerSection.setText("", false)
+        binding.filterDropdowns.spinnerSection.setAdapter(
             ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
         )
     }
@@ -193,9 +193,9 @@ class AttendanceActivity : AppCompatActivity() {
                         R.layout.dropdown_item,
                         sectionNames
                     )
-                    binding.spinnerSection.setAdapter(adapter)
+                    binding.filterDropdowns.spinnerSection.setAdapter(adapter)
 
-                    binding.spinnerSection.setOnItemClickListener { _, _, position, _ ->
+                    binding.filterDropdowns.spinnerSection.setOnItemClickListener { _, _, position, _ ->
                         selectedSectionId = sectionList[position].sectionId
                     }
                 } else {

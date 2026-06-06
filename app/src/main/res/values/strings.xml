@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">ICT2_Project</string>
+
+    <string name="alert_ok">OK</string>
+    <string name="alert_missing_title">Missing Selection</string>
+    <string name="alert_select_session">Please select a session.</string>
+    <string name="alert_select_class">Please select a class.</string>
+    <string name="alert_select_section">Please select a section.</string>
+
+    <string name="download_success_title">Download Successful</string>
+    <string name="download_success_message">Monthly Attendance Report Downloaded Successfully</string>
+    <string name="download_failed_title">Download Failed</string>
+    <string name="download_failed_message">Could not save the PDF.\n\n%1$s</string>
+
+    <string name="no_data_title">No Data Found</string>
+    <string name="no_data_message">No attendance data available for the selected month.</string>
+    <string name="error_title">Error</string>
+    <string name="server_error_message">Server error: %1$s</string>
+    <string name="network_error_message">Network error: %1$s</string>
 </resources>

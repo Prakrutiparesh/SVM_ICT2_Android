@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ict2_project.api.ApiService
 import com.example.ict2_project.api.RetrofitClient
 import com.example.ict2_project.models.*
-import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -35,7 +34,7 @@ class DailyAttendanceReportActivity : AppCompatActivity() {
     private lateinit var rvStudents: RecyclerView
     private lateinit var tvNoData: TextView
 
-    private lateinit var cardTotals: MaterialCardView
+    private lateinit var cardTotals: View
     private lateinit var tvTotalStudents: TextView
     private lateinit var tvTotalPresent: TextView
     private lateinit var tvTotalAbsent: TextView

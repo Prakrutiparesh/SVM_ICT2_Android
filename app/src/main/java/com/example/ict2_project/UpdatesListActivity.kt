@@ -26,7 +26,7 @@ class UpdatesListActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Notices & Events"
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         binding.recyclerViewUpdates.layoutManager = LinearLayoutManager(this)
         fetchUpdates()

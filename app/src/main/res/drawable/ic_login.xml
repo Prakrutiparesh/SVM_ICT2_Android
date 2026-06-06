@@ -1,10 +1,41 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:tint="@android:color/white"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
-    <path
-        android:fillColor="@android:color/white"
-        android:pathData="M10,6L8.59,7.41 13.17,12l-4.58,4.59L10,18l6,-6z" />
-</vector>
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape>
+            <solid android:color="#FDF3F5"/>
+        </shape>
+    </item>
+
+    <!-- Top Blue Shape -->
+    <item android:top="-100dp" android:left="-100dp">
+        <shape android:shape="oval">
+            <size
+                android:width="350dp"
+                android:height="250dp"/>
+            <solid android:color="#3E5E96"/>
+        </shape>
+    </item>
+
+    <!-- Top Orange Shape -->
+    <item android:top="-60dp" android:right="-80dp">
+        <shape android:shape="oval">
+            <size
+                android:width="300dp"
+                android:height="300dp"/>
+            <solid android:color="#F26C2F"/>
+        </shape>
+    </item>
+
+    <item
+        android:left="80dp"
+        android:top="220dp">
+        <shape android:shape="oval">
+            <size
+                android:width="120dp"
+                android:height="80dp"/>
+            <solid android:color="#F2D8CB"/>
+        </shape>
+    </item>
+
+</layer-list>

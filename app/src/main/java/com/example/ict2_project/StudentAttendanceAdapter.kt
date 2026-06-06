@@ -110,6 +110,8 @@ class StudentAttendanceAdapter(
         fun bind(student: Student) {
             binding.tvStudentName.text = student.fullName
             binding.tvRollNo.text = "Roll No: ${student.rollNo}"
+            binding.tvAvatarInitial.text =
+                student.fullName.trim().firstOrNull()?.uppercaseChar()?.toString() ?: "?"
         }
     }
 }

@@ -16,7 +16,7 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SchoolApp"
+        android:theme="@style/Theme.SchoolApp.Splash"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".activities.UpdatesListActivity"
@@ -26,9 +26,6 @@
             android:exported="false" />
         <activity
             android:name=".activities.StudentListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.AttendanceReportActivity"
             android:exported="false" />
         <activity
             android:name=".MonthlyAttendanceReportActivity"

@@ -3,32 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient">
+    android:background="@color/screen_bg">
 
-    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/cardLightBg"
-        android:elevation="4dp"
+        android:background="@color/toolbar_bg"
+        android:elevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationContentDescription="Back"
-        app:navigationIcon="?attr/homeAsUpIndicator">
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@color/toolbar_text">
 
         <TextView
+            style="@style/AppToolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Monthly Attendance Report"
-            android:textColor="#1E3A8A"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:text="Monthly Attendance Report" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Scrollable area for Filter Card (only) -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
     <ScrollView
         android:id="@+id/scrollViewTop"
         android:layout_width="0dp"
@@ -46,196 +51,113 @@
             android:padding="16dp"
             android:paddingBottom="8dp">
 
-            <!-- Filter Card -->
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
+                android:background="@drawable/bg_card_border"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    style="@style/AppSectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Select Criteria"
+                    android:textSize="15sp" />
+
+                <include
+                    android:id="@+id/filterDropdowns"
+                    layout="@layout/include_filter_four_dropdowns" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:text="Select Criteria"
-                        android:textColor="#1E3A8A"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <!-- Session -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/CustomTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Session"
-                        app:endIconMode="dropdown_menu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerSession"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:focusable="false"
-                            android:inputType="none"
-                            android:padding="14dp"
-                            android:popupBackground="#FFFFFF"
-                            android:textColor="#000000"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Medium -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/CustomTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Medium"
-                        app:endIconMode="dropdown_menu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:focusable="false"
-                            android:inputType="none"
-                            android:padding="14dp"
-                            android:popupBackground="#FFFFFF"
-                            android:textColor="#000000"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Class -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/CustomTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Class"
-                        app:endIconMode="dropdown_menu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerClass"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:focusable="false"
-                            android:inputType="none"
-                            android:padding="14dp"
-                            android:popupBackground="#FFFFFF"
-                            android:textColor="#000000"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Section -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/CustomTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Section / Division"
-                        app:endIconMode="dropdown_menu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerSection"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:focusable="false"
-                            android:inputType="none"
-                            android:padding="14dp"
-                            android:popupBackground="#FFFFFF"
-                            android:textColor="#000000"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Year + Month row -->
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal">
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/FilterLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:text="YEAR" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/CustomTextInputLayout"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="Year"
-                            app:endIconMode="dropdown_menu">
+                            app:endIconMode="dropdown_menu"
+                            app:hintEnabled="false">
 
                             <AutoCompleteTextView
                                 android:id="@+id/spinnerYear"
+                                style="@style/AppFilterDropdown"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@null"
-                                android:focusable="false"
+                                android:hint="Select"
                                 android:inputType="none"
-                                android:padding="14dp"
-                                android:popupBackground="#FFFFFF"
-                                android:textColor="#000000"
-                                android:textSize="15sp" />
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <Space
-                            android:layout_width="12dp"
-                            android:layout_height="wrap_content" />
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/CustomTextInputLayout"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="Month"
-                            app:endIconMode="dropdown_menu">
-
-                            <AutoCompleteTextView
-                                android:id="@+id/spinnerMonth"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@null"
-                                android:focusable="false"
-                                android:inputType="none"
-                                android:padding="14dp"
-                                android:popupBackground="#FFFFFF"
-                                android:textColor="#000000"
-                                android:textSize="15sp" />
+                                android:popupBackground="@color/surface" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
 
-                    <!-- Progress Bar -->
-                    <ProgressBar
-                        android:id="@+id/progressBar"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="20dp"
-                        android:visibility="gone" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <!-- Generate PDF Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnGeneratePDF"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="Generate PDF"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp"
-                        app:backgroundTint="#1E3A8A"
-                        app:cornerRadius="24dp" />
+                        <TextView
+                            style="@style/FilterLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:text="MONTH" />
 
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/CustomTextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:endIconMode="dropdown_menu"
+                            app:hintEnabled="false">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/spinnerMonth"
+                                style="@style/AppFilterDropdown"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Select"
+                                android:inputType="none"
+                                android:popupBackground="@color/surface" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGeneratePDF"
+                    style="@style/AppButtonPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="Download PDF"
+                    android:textSize="15sp" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

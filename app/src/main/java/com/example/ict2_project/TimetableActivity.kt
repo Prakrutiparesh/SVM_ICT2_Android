@@ -9,6 +9,7 @@ import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.ict2_project.api.RetrofitClient
 import com.example.ict2_project.databinding.ActivityTimetableBinding
 import com.example.ict2_project.models.Class
@@ -65,13 +66,13 @@ class TimeTableActivity : AppCompatActivity() {
     private fun setupSpinners() {
         // Medium Spinner
         val mediumAdapter = ArrayAdapter(this, R.layout.dropdown_item, mediums)
-        binding.spinnerMedium.setAdapter(mediumAdapter)
+        binding.filterDropdowns.spinnerMedium.setAdapter(mediumAdapter)
 
         // Set default medium
-        binding.spinnerMedium.setText(mediums[0], false)
+        binding.filterDropdowns.spinnerMedium.setText(mediums[0], false)
         selectedMedium = mediums[0]
 
-        binding.spinnerMedium.setOnItemClickListener { _, _, position, _ ->
+        binding.filterDropdowns.spinnerMedium.setOnItemClickListener { _, _, position, _ ->
             selectedMedium = mediums[position]
 
             // 🔥 CRITICAL: Clear everything when medium changes (same as AttendanceActivity)
@@ -93,13 +94,13 @@ class TimeTableActivity : AppCompatActivity() {
         sections.clear()
         allClasses.clear()
 
-        binding.spinnerClass.setText("", false)
-        binding.spinnerSection.setText("", false)
+        binding.filterDropdowns.spinnerClass.setText("", false)
+        binding.filterDropdowns.spinnerSection.setText("", false)
 
-        binding.spinnerClass.setAdapter(
+        binding.filterDropdowns.spinnerClass.setAdapter(
             ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
         )
-        binding.spinnerSection.setAdapter(
+        binding.filterDropdowns.spinnerSection.setAdapter(
             ArrayAdapter(this, R.layout.dropdown_item, emptyList<String>())
         )
     }
@@ -113,10 +114,10 @@ class TimeTableActivity : AppCompatActivity() {
                     val names = sessions.map { it.sessionName }
                     val adapter =
                         ArrayAdapter(this@TimeTableActivity, R.layout.dropdown_item, names)
-                    binding.spinnerSession.setAdapter(adapter)
+                    binding.filterDropdowns.spinnerSession.setAdapter(adapter)
 
                     if (sessions.isNotEmpty()) {
-                        binding.spinnerSession.setText(names[0], false)
+                        binding.filterDropdowns.spinnerSession.setText(names[0], false)
                         selectedSessionId = sessions[0].sessionId
 
                         // Load classes if medium is already selected
@@ -125,7 +126,7 @@ class TimeTableActivity : AppCompatActivity() {
                         }
                     }
 
-                    binding.spinnerSession.setOnItemClickListener { _, _, position, _ ->
+                    binding.filterDropdowns.spinnerSession.setOnItemClickListener { _, _, position, _ ->
                         selectedSessionId = sessions[position].sessionId
 
                         // 🔥 Clear class and section when session changes
@@ -215,14 +216,14 @@ class TimeTableActivity : AppCompatActivity() {
     private fun updateClassSpinner() {
         val classNames = classes.map { it.className }
         val adapter = ArrayAdapter(this, R.layout.dropdown_item, classNames)
-        binding.spinnerClass.setAdapter(adapter)
+        binding.filterDropdowns.spinnerClass.setAdapter(adapter)
 
         if (classNames.isEmpty()) {
-            binding.spinnerClass.setText("", false)
+            binding.filterDropdowns.spinnerClass.setText("", false)
         }
 
         // Set up class item click listener
-        binding.spinnerClass.setOnItemClickListener { _, _, position, _ ->
+        binding.filterDropdowns.spinnerClass.setOnItemClickListener { _, _, position, _ ->
             if (position < classes.size) {
                 selectedClassId = classes[position].classId
                 clearSection()
@@ -234,8 +235,8 @@ class TimeTableActivity : AppCompatActivity() {
     private fun clearSection() {
         selectedSectionId = null
         sections.clear()
-        binding.spinnerSection.setText("", false)
-        binding.spinnerSection.setAdapter(
+        binding.filterDropdowns.spinnerSection.setText("", false)
+        binding.filterDropdowns.spinnerSection.setAdapter(
             ArrayAdapter(
                 this,
                 R.layout.dropdown_item,
@@ -262,9 +263,9 @@ class TimeTableActivity : AppCompatActivity() {
                             R.layout.dropdown_item,
                             sectionNames
                         )
-                        binding.spinnerSection.setAdapter(adapter)
+                        binding.filterDropdowns.spinnerSection.setAdapter(adapter)
 
-                        binding.spinnerSection.setOnItemClickListener { _, _, position, _ ->
+                        binding.filterDropdowns.spinnerSection.setOnItemClickListener { _, _, position, _ ->
                             if (position < sections.size) {
                                 selectedSectionId = sections[position].sectionId
                             }
@@ -378,13 +379,13 @@ class TimeTableActivity : AppCompatActivity() {
         return TextView(this).apply {
             setText(text)
             setTextColor(Color.WHITE)
-            setBackgroundColor(Color.parseColor("#1E3A8A"))
+            setBackgroundColor(ContextCompat.getColor(this@TimeTableActivity, R.color.accent_blue))
             setPadding(20, 16, 20, 16)
             textSize = 14f
             gravity = Gravity.CENTER
             val border = android.graphics.drawable.GradientDrawable()
             border.setStroke(1, Color.parseColor("#DDDDDD"))
-            border.setColor(Color.parseColor("#1E3A8A"))
+            border.setColor(ContextCompat.getColor(this@TimeTableActivity, R.color.accent_blue))
             background = border
         }
     }
@@ -394,8 +395,11 @@ class TimeTableActivity : AppCompatActivity() {
         rowIndex: Int,
         isPeriodCell: Boolean = false
     ): TextView {
-        val bgColor =
-            if (rowIndex % 2 == 0) Color.parseColor("#FFFFFF") else Color.parseColor("#F5F8FF")
+        val bgColor = if (rowIndex % 2 == 0) {
+            ContextCompat.getColor(this, R.color.cardLightBg)
+        } else {
+            ContextCompat.getColor(this, R.color.card_highlight)
+        }
         return TextView(this).apply {
             setTextColor(Color.BLACK)
             setBackgroundColor(bgColor)

@@ -23,22 +23,19 @@ class AttendanceResultActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toolbar.navigationIcon?.setTint(getColor(android.R.color.white))
-
         // Get data from Intent
         val students =
             intent.getSerializableExtra("students") as? List<DailyReportStudent> ?: emptyList()
         val totals = intent.getSerializableExtra("totals") as? AttendanceTotals
 
-        // Set totals
-        findViewById<TextView>(R.id.tvTotalStudents).text = "Total Students: ${students.size}"
+        findViewById<TextView>(R.id.tvTotalStudents).text = students.size.toString()
         totals?.let {
-            findViewById<TextView>(R.id.tvTotalPresent).text = "Present: ${it.totalPresent}"
-            findViewById<TextView>(R.id.tvTotalAbsent).text = "Absent: ${it.totalAbsent}"
+            findViewById<TextView>(R.id.tvTotalPresent).text = it.totalPresent.toString()
+            findViewById<TextView>(R.id.tvTotalAbsent).text = it.totalAbsent.toString()
             findViewById<TextView>(R.id.tvGirlsBreakup).text =
-                "Girls: P ${it.girlsPresent} | A ${it.girlsAbsent}"
+                "Girls — Present: ${it.girlsPresent}, Absent: ${it.girlsAbsent}"
             findViewById<TextView>(R.id.tvBoysBreakup).text =
-                "Boys: P ${it.boysPresent} | A ${it.boysAbsent}"
+                "Boys — Present: ${it.boysPresent}, Absent: ${it.boysAbsent}"
         }
 
         // Set up RecyclerView

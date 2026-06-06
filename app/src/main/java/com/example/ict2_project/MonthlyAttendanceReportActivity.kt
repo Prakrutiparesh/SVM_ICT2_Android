@@ -10,6 +10,7 @@ import android.widget.*
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.lifecycle.lifecycleScope
 import com.example.ict2_project.api.ApiService
 import com.example.ict2_project.api.RetrofitClient
@@ -301,7 +302,7 @@ class MonthlyAttendanceReportActivity : AppCompatActivity() {
             }
 
         if (selectedSession == null) {
-            toast("Select session")
+            showAlert(getString(R.string.alert_missing_title), getString(R.string.alert_select_session), false)
             return
         }
         val selectedClass =
@@ -310,7 +311,7 @@ class MonthlyAttendanceReportActivity : AppCompatActivity() {
             }
 
         if (selectedClass == null) {
-            toast("Select class")
+            showAlert(getString(R.string.alert_missing_title), getString(R.string.alert_select_class), false)
             return
         }
         val selectedSection =
@@ -319,7 +320,7 @@ class MonthlyAttendanceReportActivity : AppCompatActivity() {
             }
 
         if (selectedSection == null) {
-            toast("Select section")
+            showAlert(getString(R.string.alert_missing_title), getString(R.string.alert_select_section), false)
             return
         }
 
@@ -369,7 +370,11 @@ class MonthlyAttendanceReportActivity : AppCompatActivity() {
                         if (report.students != null && report.students.isNotEmpty()) {
                             createAndSavePdf(report)
                         } else {
-                            toast("No attendance data for selected month")
+                            showAlert(
+                                getString(R.string.no_data_title),
+                                getString(R.string.no_data_message),
+                                false
+                            )
                         }
                     } catch (e: Exception) {
                         // Server returned error JSON instead of data
@@ -378,16 +383,20 @@ class MonthlyAttendanceReportActivity : AppCompatActivity() {
                         } else {
                             jsonElement.asString
                         }
-                        toast("Server error: $errorMsg")
+                        showAlert(getString(R.string.error_title), getString(R.string.server_error_message, errorMsg), false)
                     }
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorCode = response.code()
                     Log.e("MonthlyReport", "Error code: $errorCode, body: $errorBody")
-                    toast("Server error ($errorCode): ${errorBody ?: "no response body"}")
+                    showAlert(
+                        getString(R.string.error_title),
+                        getString(R.string.server_error_message, "$errorCode: ${errorBody ?: "no response body"}"),
+                        false
+                    )
                 }
             } catch (e: Exception) {
-                toast("Network error: ${e.message}")
+                showAlert(getString(R.string.error_title), getString(R.string.network_error_message, e.message ?: ""), false)
             } finally {
                 progressBar.visibility = View.GONE
                 btnGeneratePDF.isEnabled = true
@@ -644,11 +653,36 @@ class MonthlyAttendanceReportActivity : AppCompatActivity() {
         val file = File(downloadsDir, "MonthlyAttendance_$timeStamp.pdf")
         try {
             pdfDocument.writeTo(FileOutputStream(file))
-            Toast.makeText(this, "PDF saved:\n${file.absolutePath}", Toast.LENGTH_LONG).show()
+            showDownloadSuccessAlert(file)
         } catch (e: Exception) {
-            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            showAlert(
+                title = getString(R.string.download_failed_title),
+                message = getString(R.string.download_failed_message, e.message ?: "Unknown error"),
+                isSuccess = false
+            )
         }
         pdfDocument.close()
+    }
+
+    private fun showDownloadSuccessAlert(file: File) {
+        showAlert(
+            title = getString(R.string.download_success_title),
+            message = getString(R.string.download_success_message),
+            isSuccess = true
+        )
+    }
+
+    private fun showAlert(title: String, message: String, isSuccess: Boolean) {
+        val builder = MaterialAlertDialogBuilder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(R.string.alert_ok) { dialog, _ -> dialog.dismiss() }
+
+        if (isSuccess) {
+            builder.setIcon(R.drawable.ic_check)
+        }
+
+        builder.show()
     }
 
     // Helper to format date as "dd-MMM" (e.g., "01-May")

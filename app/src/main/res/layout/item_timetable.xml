@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#1E3A8A" />
+            android:textColor="@color/accent_blue" />
 
         <LinearLayout
             android:layout_width="match_parent"
