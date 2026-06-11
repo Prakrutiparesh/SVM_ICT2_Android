@@ -1,6 +1,5 @@
 package com.example.ict2_project
 
-
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -8,17 +7,20 @@ import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.ict2_project.R          // ✅ ADD THIS LINE
+import androidx.lifecycle.lifecycleScope
+import com.example.ict2_project.R
 import com.example.ict2_project.api.RetrofitClient
 import com.example.ict2_project.models.LoginRequest
 import com.example.ict2_project.models.User
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -43,7 +45,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // Initialize views
         etUsername = findViewById(R.id.etUsername)
         etPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
@@ -52,20 +53,18 @@ class MainActivity : AppCompatActivity() {
         val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
         val tilPassword = findViewById<TextInputLayout>(R.id.tilPassword)
         fixPasswordToggle(tilPassword)
-        sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
 
-        // Check if already logged in
+        sharedPreferences = getSharedPreferences("TeacherApp", MODE_PRIVATE)
+
         if (sharedPreferences.getBoolean("isLoggedIn", false)) {
             startActivity(Intent(this, DashboardActivity::class.java))
             finish()
         }
 
-        // ✅ Forgot password click listener – works immediately, no login click needed
         tvForgotPassword.setOnClickListener {
             startActivity(Intent(this, ResetPasswordActivity::class.java))
         }
 
-        // Login button click listener
         btnLogin.setOnClickListener {
             val username = etUsername.text.toString().trim()
             val password = etPassword.text.toString().trim()
@@ -99,24 +98,25 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val user = response.body()
                     if (user != null) {
-                        // Check groupId = 2 (Faculty/Staff)
+                        // Debug log
+                        android.util.Log.d("Login", "UserId: ${user.userId}")
+                        android.util.Log.d("Login", "GroupId: ${user.groupId}")
+                        android.util.Log.d("Login", "FullName: ${user.fullName}")
+
+                        // Check if teacher (groupId = 2)
                         if (user.groupId == 2) {
-                            // Save login session
                             sharedPreferences.edit().apply {
                                 putBoolean("isLoggedIn", true)
-                                putInt("userId", user.userId)
+                                putInt("UserId", user.userId)
                                 putString("username", user.username)
                                 putString("fullName", user.fullName ?: user.username)
-                                putInt("groupId", user.groupId ?: 0)
+                                putInt("GroupId", user.groupId ?: 0)
                                 apply()
                             }
 
-                            // Go to Dashboard
-                            val intent = Intent(this@MainActivity, DashboardActivity::class.java)
-                            startActivity(intent)
-                            finish()
+                            fetchAndSaveStaffId(user.userId)
                         } else {
-                            showError("Access denied: This app is only for Faculty/Staff.")
+                            showError("Access denied. Only teachers can login. Your GroupId: ${user.groupId}")
                         }
                     } else {
                         showError("Invalid response from server")
@@ -137,20 +137,39 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun fetchAndSaveStaffId(userId: Int) {
+        lifecycleScope.launch {
+            try {
+                val apiService = RetrofitClient.instance
+                val staff = apiService.getStaffByUserId(userId)
+                if (staff != null && staff.staffId > 0) {
+                    sharedPreferences.edit().putInt("StaffId", staff.staffId).apply()
+                    android.util.Log.d("Login", "StaffId saved: ${staff.staffId}")
+                    Toast.makeText(this@MainActivity, "Welcome ${staff.fullName}!", Toast.LENGTH_SHORT).show()
+                } else {
+                    android.util.Log.e("Login", "Staff record not found")
+                    Toast.makeText(this@MainActivity, "Staff record not found", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("Login", "Error: ${e.message}")
+            }
+
+            startActivity(Intent(this@MainActivity, DashboardActivity::class.java))
+            finish()
+        }
+    }
+
     private fun fixPasswordToggle(textInputLayout: TextInputLayout) {
         val editText = textInputLayout.editText as? TextInputEditText ?: return
         val endIconView =
             textInputLayout.findViewById<View>(com.google.android.material.R.id.text_input_end_icon)
 
         endIconView?.setOnClickListener {
-            // Manually toggle the password visibility
             val selection = editText.selectionEnd
             if (editText.transformationMethod == null) {
-                // Currently visible -> hide it
                 editText.transformationMethod = PasswordTransformationMethod.getInstance()
                 endIconView.isSelected = false
             } else {
-                // Currently hidden -> show it
                 editText.transformationMethod = null
                 endIconView.isSelected = true
             }

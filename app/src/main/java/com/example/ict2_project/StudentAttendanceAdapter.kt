@@ -15,10 +15,32 @@ class StudentAttendanceAdapter(
     private val onStatusChanged: (studentId: Int, status: String) -> Unit
 ) : RecyclerView.Adapter<StudentAttendanceAdapter.ViewHolder>() {
 
-    private val selectedStatuses = mutableMapOf<Int, String>().apply {
+    // Line 20: Make this internal so Activity can access it
+    internal val selectedStatuses = mutableMapOf<Int, String>().apply {
         students.forEach { put(it.studentId, "Present") }
     }
 
+    // ========== 🔴 LINE 25-32: YEH NAYA METHOD ADD KARO ==========
+    fun setAllStatuses(status: String) {
+        students.forEach { student ->
+            selectedStatuses[student.studentId] = status
+            onStatusChanged(student.studentId, status)
+        }
+        notifyDataSetChanged()
+    }
+    // ==============================================================
+
+    // ========== 🔴 LINE 35-42: YEH NAYA METHOD ADD KARO (Reset ke liye) ==========
+    fun resetAllStatuses() {
+        students.forEach { student ->
+            selectedStatuses[student.studentId] = "Present"
+            onStatusChanged(student.studentId, "Present")
+        }
+        notifyDataSetChanged()
+    }
+    // ========================================================================
+
+    // Line 45: onCreateViewHolder - NO CHANGE
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemStudentAttendanceBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -26,15 +48,14 @@ class StudentAttendanceAdapter(
         return ViewHolder(binding)
     }
 
+    // Line 53: onBindViewHolder - NO CHANGE
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val student = students[position]
         holder.bind(student)
 
-        // Remove previous listeners to avoid conflicts
         holder.binding.btnPresent.setOnClickListener(null)
         holder.binding.btnAbsent.setOnClickListener(null)
 
-        // Set visual state based on current status
         updateButtonAppearance(
             holder.binding.btnPresent,
             holder.binding.btnAbsent,
@@ -66,6 +87,7 @@ class StudentAttendanceAdapter(
         }
     }
 
+    // Line 95: updateButtonAppearance - NO CHANGE
     private fun updateButtonAppearance(
         btnPresent: MaterialButton,
         btnAbsent: MaterialButton,
@@ -75,10 +97,7 @@ class StudentAttendanceAdapter(
         when (status) {
             "Present" -> {
                 btnPresent.setBackgroundColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.present_green
-                    )
+                    ContextCompat.getColor(context, R.color.present_green)
                 )
                 btnPresent.setTextColor(Color.WHITE)
                 btnAbsent.setBackgroundColor(Color.TRANSPARENT)

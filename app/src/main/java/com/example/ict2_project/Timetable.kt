@@ -23,14 +23,29 @@ data class Timetable(
 )
 
 data class Staff(
-    @SerializedName(value = "StaffId", alternate = ["staffId"])
+    @SerializedName("staffId")
     val staffId: Int,
 
-    @SerializedName(value = "FirstName", alternate = ["firstName"])
+    @SerializedName("userId")
+    val userId: Int,
+
+    @SerializedName("firstName")
     val firstName: String?,
 
-    @SerializedName(value = "LastName", alternate = ["lastName"])
-    val lastName: String?
+    @SerializedName("lastName")
+    val lastName: String?,
+
+    @SerializedName("designation")
+    val designation: String?,
+
+    @SerializedName("qualification")
+    val qualification: String?,
+
+    @SerializedName("email")
+    val email: String?,
+
+    @SerializedName("phone")
+    val phone: String?
 ) {
     val fullName: String
         get() = "${firstName ?: ""} ${lastName ?: ""}".trim()
@@ -49,7 +64,16 @@ data class Session(
     val sessionId: Int,
 
     @SerializedName(value = "SessionName", alternate = ["sessionName"])
-    val sessionName: String
+    val sessionName: String,
+
+    @SerializedName(value = "StartYear", alternate = ["startYear"])
+    val startYear: Int = 0,
+
+    @SerializedName(value = "EndYear", alternate = ["endYear"])
+    val endYear: Int = 0,
+
+    @SerializedName(value = "IsActive", alternate = ["isActive"])
+    val isActive: Int = 1
 )
 
 data class Class(

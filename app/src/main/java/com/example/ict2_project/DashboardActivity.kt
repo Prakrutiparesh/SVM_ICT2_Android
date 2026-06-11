@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.ict2_project.activities.AttendanceActivity
 import com.example.ict2_project.activities.UpdatesListActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.card.MaterialCardView
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -29,6 +30,7 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var cardAttendance: View
     private lateinit var cardTimetable: View
     private lateinit var cardAttendanceReport: View
+    private lateinit var cardMarksEntry: MaterialCardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +47,20 @@ class DashboardActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        // ✅ FIX: Use same SharedPreferences name as MainActivity
+        sharedPreferences = getSharedPreferences("TeacherApp", Context.MODE_PRIVATE)
 
+        // ✅ Debug: Print all saved data
+        val userId = sharedPreferences.getInt("UserId", 0)
+        val staffId = sharedPreferences.getInt("StaffId", 0)
         val fullName = sharedPreferences.getString("fullName", "Teacher") ?: "Teacher"
+        val groupId = sharedPreferences.getInt("GroupId", 0)
+
+        android.util.Log.d("Dashboard", "UserId: $userId")
+        android.util.Log.d("Dashboard", "StaffId: $staffId")
+        android.util.Log.d("Dashboard", "FullName: $fullName")
+        android.util.Log.d("Dashboard", "GroupId: $groupId")
+
         val greeting = getGreeting()
 
         tvWelcome = findViewById(R.id.tvWelcome)
@@ -56,25 +69,47 @@ class DashboardActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvDate).text =
             SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault()).format(Date())
 
-        findViewById<TextView>(R.id.tvAvatarInitial).text =
+        // ✅ FIX: Show first letter of full name
+        val firstLetter = if (fullName.isNotEmpty() && fullName != "Teacher") {
             fullName.trim().firstOrNull()?.uppercaseChar()?.toString() ?: "T"
+        } else {
+            "T"
+        }
+        findViewById<TextView>(R.id.tvAvatarInitial).text = firstLetter
 
+        // Initialize all cards
         cardAttendance = findViewById(R.id.cardAttendance)
         cardTimetable = findViewById(R.id.cardTimetable)
         cardAttendanceReport = findViewById(R.id.cardAttendanceReport)
         val cardNoticesEvents = findViewById<View>(R.id.cardNoticesEvents)
+        cardMarksEntry = findViewById(R.id.cardMarksEntry)
 
+        // Set click listeners
         cardAttendance.setOnClickListener {
             startActivity(Intent(this, AttendanceActivity::class.java))
         }
+
         cardTimetable.setOnClickListener {
             startActivity(Intent(this, TimeTableActivity::class.java))
         }
+
         cardAttendanceReport.setOnClickListener {
             showReportOptionsSheet()
         }
+
         cardNoticesEvents.setOnClickListener {
             startActivity(Intent(this, UpdatesListActivity::class.java))
+        }
+
+        // Marks Entry click listener
+        cardMarksEntry.setOnClickListener {
+            try {
+                val intent = Intent(this, MarksEntryActivity::class.java)
+                startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                android.widget.Toast.makeText(this, "Marks Entry feature coming soon!", android.widget.Toast.LENGTH_SHORT).show()
+            }
         }
 
         animateEntrance()

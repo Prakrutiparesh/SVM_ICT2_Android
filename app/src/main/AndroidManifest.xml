@@ -19,6 +19,9 @@
         android:theme="@style/Theme.SchoolApp.Splash"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".MarksEntryActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.UpdatesListActivity"
             android:exported="false" />
         <activity
