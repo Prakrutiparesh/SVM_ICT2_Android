@@ -345,6 +345,7 @@ class MarksEntryActivity : AppCompatActivity() {
             else getColor(R.color.status_present_text)
         )
     }
+
     private fun loadExamSubjects() {
         val exam = selectedExam ?: return
         val staffId = sharedPref.getInt("StaffId", 0)
@@ -455,14 +456,23 @@ class MarksEntryActivity : AppCompatActivity() {
                 }
 
                 if (currentStudents.isEmpty()) {
+
                     binding.tvNoData.visibility = android.view.View.VISIBLE
                     binding.tvNoData.text = "No students found"
+
+                    binding.headerLayout.visibility = android.view.View.GONE
                     binding.rvStudents.visibility = android.view.View.GONE
                     binding.tvStudentsHeader.visibility = android.view.View.GONE
+
                     binding.btnSubmit.isEnabled = false
+
                 } else {
+
                     binding.tvNoData.visibility = android.view.View.GONE
+
                     setupRecyclerView()
+
+                    binding.headerLayout.visibility = android.view.View.VISIBLE
                     binding.tvStudentsHeader.visibility = android.view.View.VISIBLE
                     binding.rvStudents.visibility = android.view.View.VISIBLE
                     binding.btnSubmit.isEnabled = true
@@ -484,8 +494,18 @@ class MarksEntryActivity : AppCompatActivity() {
             selectedSubject!!.totalMarks,
             isEditable
         )
-        binding.rvStudents.layoutManager = LinearLayoutManager(this)
-        binding.rvStudents.adapter = studentAdapter
+
+        binding.rvStudents.apply {
+            layoutManager = LinearLayoutManager(this@MarksEntryActivity)
+            adapter = studentAdapter
+            isNestedScrollingEnabled = false  // ✅ Important for NestedScrollView
+            setHasFixedSize(false)
+        }
+
+        // ✅ Scroll to top when data loads
+        binding.rvStudents.post {
+            binding.mainScrollView.fullScroll(android.view.View.FOCUS_UP)
+        }
 
         binding.btnSubmit.visibility =
             if (isEditable) android.view.View.VISIBLE else android.view.View.GONE
